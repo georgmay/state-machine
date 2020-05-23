@@ -4,8 +4,8 @@ xc:
 
 clean:
 	-rm -rf .build
+	-rm -rf *.xcodeproj
 	-rm Package.resolved
 
-xcode:
-	clean
+xcode: clean
 	swift package generate-xcodeproj
