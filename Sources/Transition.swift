@@ -15,7 +15,7 @@ public class Transition<State, Event> {
   private var enterBlock: ExecutionBlock?
   private var exitBlock: ExecutionBlock?
   
-  init(
+  public init(
     with event: Event,
     from source: State,
     to destination: State

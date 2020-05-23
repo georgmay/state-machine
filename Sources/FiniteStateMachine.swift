@@ -1,6 +1,6 @@
 import Foundation
 
-class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine {
+public class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine {
 	enum Error: Swift.Error, Equatable {
 		case divergenceAttempt
 		case noTransition
@@ -18,7 +18,7 @@ class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine {
 		transitionsByEvent = [:]
 	}
 	
-  func process(event: Event) {
+  public func process(event: Event) {
 		guard let transition = findTransition(for: event, initiating: current) else {
 			return
 		}
@@ -31,7 +31,7 @@ class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine {
 		lastTransition = transition
   }
   
-	func add(transition: Transition<State, Event>) throws {
+	public func add(transition: Transition<State, Event>) throws {
 		guard findTransition(for: transition.event, initiating: transition.source) == nil else {
 			throw Error.divergenceAttempt
 		}
