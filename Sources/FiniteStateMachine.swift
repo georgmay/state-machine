@@ -12,7 +12,7 @@ public class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine 
 	private var transitionsByEvent: [Event: [Transition<State, Event>]]
 	private var lastTransition: Transition<State, Event>?
 	
-	init(`default`: State) {
+	public init(`default`: State) {
 		current = `default`
 		
 		transitionsByEvent = [:]
