@@ -6,7 +6,9 @@ public class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine 
 		case noTransition
 	}
 	
-	var current: State
+	public var current: State
+  public var onEnter: ((Transition<State, Event>) -> Void)?
+  public var onExit: ((Transition<State, Event>) -> Void)?
 	
 	// https://en.wikipedia.org/wiki/State-transition_table
 	private var transitionsByEvent: [Event: [Transition<State, Event>]]
@@ -23,11 +25,15 @@ public class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine 
 			return
 		}
 		
-		lastTransition?.performExit()
+		if let last = lastTransition {
+      onExit?(last)
+      last.performExit()
+    }
 		
 		current = transition.destination
+    onEnter?(transition)
 		transition.performEnter()
-		
+    
 		lastTransition = transition
   }
   
