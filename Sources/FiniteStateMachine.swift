@@ -1,55 +1,46 @@
 import Foundation
 
-public class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine {
-	enum Error: Swift.Error, Equatable {
-		case divergenceAttempt
-		case noTransition
-	}
-	
-	public var current: State
-  public var onEnter: ((Transition<State, Event>) -> Void)?
-  public var onExit: ((Transition<State, Event>) -> Void)?
-	
+public final class FiniteStateMachine<State: Hashable, Event: Hashable>: StateMachine {
+	public private(set) var current: State
+	public var onEnter: ((Transition<State, Event>) -> Void)?
+	public var onExit: ((Transition<State, Event>) -> Void)?
+
 	// https://en.wikipedia.org/wiki/State-transition_table
 	private var transitionsByEvent: [Event: [Transition<State, Event>]]
 	private var lastTransition: Transition<State, Event>?
-	
+
 	public init(`default`: State) {
-		current = `default`
-		
-		transitionsByEvent = [:]
+		self.current = `default`
+		self.transitionsByEvent = [:]
 	}
-	
-  public func process(event: Event) {
-		guard let transition = findTransition(for: event, initiating: current) else {
+
+	public func process(event: Event) {
+		guard let transition = self.findTransition(for: event, initiating: current) else {
 			return
 		}
-		
-		if let last = lastTransition {
-      onExit?(last)
-      last.performExit()
-    }
-		
-		current = transition.destination
-    onEnter?(transition)
-		transition.performEnter()
-    
-		lastTransition = transition
-  }
-  
-	public func add(transition: Transition<State, Event>) throws {
-		guard findTransition(for: transition.event, initiating: transition.source) == nil else {
-			throw Error.divergenceAttempt
+
+		if let last = self.lastTransition {
+			self.onExit?(last)
+			last.performExit()
 		}
 
-		transitionsByEvent[
-			transition.event,
-			default: []
-		].append(transition)
-  }
-	
+		self.current = transition.destination
+		self.onEnter?(transition)
+		transition.performEnter()
+
+		self.lastTransition = transition
+	}
+
+	public func add(transition: Transition<State, Event>) throws {
+		guard self.findTransition(for: transition.event, initiating: transition.source) == nil else {
+			throw StateMachineError.divergenceAttempt
+		}
+
+		self.transitionsByEvent[transition.event, default: []].append(transition)
+	}
+
 	private func findTransition(for event: Event, initiating state: State) -> Transition<State, Event>? {
-		let allEventTransitions = transitionsByEvent[event, default: []]
+		let allEventTransitions = self.transitionsByEvent[event, default: []]
 		return allEventTransitions.first { $0.source == state }
 	}
 }

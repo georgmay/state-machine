@@ -6,7 +6,7 @@ import Testing
 struct StateMachineTests {
 	@Suite(
 		"textbook coin-operated turnstile example",
-		Comment("Read more: https://en.wikipedia.org/wiki/Finite-state_machine#Example:_coin-operated_turnstile")
+		Comment("https://en.wikipedia.org/wiki/Finite-state_machine#Example:_coin-operated_turnstile")
 	)
 	struct TurnstileTests {
 		enum Event {
